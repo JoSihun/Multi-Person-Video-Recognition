@@ -1,0 +1,68 @@
+### 검증방법에 대한 기반지식
+
+# UCF101 Benchmark 3-fold accuracy
+1) K-Fold Cross Validation 기법(일명 K겹 교차검증)
+2) 데이터셋을 K개로 분할해서, 모든 데이터를 최소 한 번은 테스트셋으로 사용하는 기법
+
+# Top-1 Accuracy, Top-5 Accuracy
+1) Top-1 Accuracy: Softmax output에서 제일 높은 class를 후보로 놓고, 정답이 후보군에 있는지 확인, 일반적인 Accuray 동일
+2) Top-5 Accuracy: Softmax output에서 가장 높은 5개의 class를 후보로 놓고, 정답이 후보군에 있는지 확인
+3) 첨부된 링크에 간단한 예시를 들어 이해하기 쉽게 설명되어있음
+한글참고자료: https://enjoyso.tistory.com/122
+
+=============================================================================
+### 고려사항
+
+# 염동빈 Survey Accuracy 70%에 대해
+1) Accuracy는 Kinetics-400 데이터셋에 대한 최대 Accuracy임
+2) TSN/I3D/I3D-Slow 는 ImageNet으로 Pre-Trained됨
+3) R2+1D/Slow-Fast/TPN 종류는 처음부터 Train
+4) Action Recogntion on Kinetics-400 Benchmark 자료가 많지 않아 비교 확인이 불가능
+5) Accuracy 차이에 대한 추측
+ㄴ 5-1) 데이터셋에 따른 차이 때문
+ㄴ 5-2) 검증방법의 차이(해당논문에서는 Top-1 Accuracy, UCF101 Benchmark에서는 3-fold Accuracy = K-겹 교차검증)
+ㄴ 5-3) 모델의 차이(일반적으로는 70%대인데, Benchmark는 순위를 다투는 고성능 모델이라 90%대인 상황일 수 있음)
+=> 검증방법의 차이 때문일 확률이 유력한 것으로 사료됨
+=> 만약 그렇다면 성능목표는 Top-1 Accuracy를 기준으로 75~80%가 적절하다고 사료됨
+Kinetics-400 Benchmark: https://paperswithcode.com/sota/action-recognition-on-kinetics-400
+
+# UCF101 데이터 보통 1인인 듯한데 1인 이상이면 어떻게 해야할지
+1) 일부 데이터에서 다수의 인원이 등장하는 데이터 확인
+2) 두 사람이 악수를 한다거나(악수), 여러 인원이 축구를 하는 경우(축구)
+3) 주관사에서 제공하는 데이터셋에 따라 방향이 달라질 것으로 예상
+4) 만약 등장하는 각각의 사람마다 Action Recognition이 필요하다면 다른 방법이 필요할 것
+=============================================================================
+### 각 모델에 대한 기반지식
+
+# Two-Stream
+1) 동영상 데이터는 기본적으로 공간적(Spatial), 시간적(Temporal) 요소로 분해가능
+2) Spatial Stream은 RGB 영상을 입력으로 사용, 영상의 장면과 물체에 대한 정보를 포함
+3) Temporal Stream은 Optical Flow 영상을 입력으로 사용, 물체의 움직임에 대한 정보를 포함
+4) 각 스트림 모두 5개의 Convolutional Layer, 2개의 Fully Connected Layer, 1개의 Softmax Layer로 구성
+5) 최끝단에서 Late Fusion으로 두 스트림 합침
+한글 논문 리뷰: https://m.blog.naver.com/khm159/221871148618
+
+# SMART
+1) 동영상 데이터에서 중요한 프레임을 선별하여 최종학습에 사용하는 방법 제안
+2) 기본적으로 Two-Stream 기반으로 구성됨
+3) Single Frame Selector Stream: 매 프레임마다 중요도 점수를 계산, 해당 프레임이 분류에 얼마나 유용한지 판별
+4) Global Selector Stream: 전체 동영상 데이터에 Attention and Relational Network 사용, 시공간적 관계를 기반으로 프레임별 중요도 점수를 계산
+5) 두 Stream의 중요도 점수를 곱하여 각 프레임별 최종 중요도 점수 계산, 가장 높은 상위 n개의 프레임을 선택
+6) Attention: 중요한 입력부분을 다시 참고하는 기계학습 기법
+7) Backbone이 Kinetics로 Pre-Trained 되었고, UCF101을 사용하여, 전처리 단계로 SMART를 사용한 SOTA 성능평가 94.9%
+한글 논문 리뷰: https://junsk1016.github.io/deeplearning/(Smart-Frame-Selection)/
+
+# PERF-Net
+1) Two-Stream Framework에 Pose Stream을 추가하는 방식 제안
+2) 표준 RGB 및 Flow 기반 입력 스트림이라고 하는 것으로 보아 Optical Flow인지 합리적 의심이 듬
+3) 정확하지만 느리다는 단점이 있음
+4) Kinetics-600을 사용하여 평가, Top-1 82.0%, Top-5 95.7% Accuracy 기록
+5) Optical Flow 내용이 반드시 빠져야 하는가 의문
+한글 논문 리뷰: https://junsk1016.github.io/deeplearning/PERFNet/
+
+# Slow-Fast Net
+1) 동영상 데이터를 Frame Rate에 따라 2개의 Stream으로 구성한 Two-Stream Network 제안
+2) Slow-Pathway는 Low Frame Rate로 구성되어, 영상의 장면과 물체에 대한 정보를 포함
+3) Fast-Pathway는 High Frame Rate로 구성되어, 물체의 움직임에 대한 정보를 포함
+4) Kinetics-400을 사용하여 평가, Top-1 79.8%, Top-5 93.9% Accuracy 기록
+한글 논문 리뷰: https://chacha95.github.io/2019-07-20-VideoUnderstanding6/
