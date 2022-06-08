@@ -1,0 +1,29 @@
+# kps2d(keypoints 약자로 추정)
+1) Shape (436, 22, 2)
+2) 436프레임, 각 프레임당 22개 Joint Keypoint, (x, y)좌표
+3) 관련 데이터셋: PoseTrack18, sub-JHMDB
+
+# kps3d(keypoints 약자로 추정)
+1) Shape (436, 22, 3)
+2) 436프레임, 각 프레임당 22개 Joint Keypoint, (x, y, z)좌표
+3) 관련 데이터셋: Human3.6M, CMU Panoptic, Campus/Shelf
+
+# video(mp4)
+1) Shape (436, 1080, 1920, 3)
+2) 436프레임, 각 프레임당 (1080, 1920, 3) = (height, width, channel)
+3) 관련 데이터셋: UCF101, Kinetics400/600
+
+# projMat(카메라 매트릭스, Camera Calibration)
+1) 카메라 파라미터 추정
+2) 카메라 파라미터: 실세계 3D 좌표와 카메라 캡쳐 이미지 2D 좌표 간,
+                         정확한 관계결정에 필요한, 카메라에 대한 모든 정보
+3) 데이터 형태: 딕셔너리
+    Key: K | Shape: (3, 3)		# 내부 파라미터: K
+    Key: R | Shape: (3, 3)		# 외부 파라미터: [R | t]
+    Key: t | Shape: (3,)		# 외부 파라미터: [R | t]
+    Key: RD | Shape: (5,)		# ???
+    Key: Ropt | Shape: (3, 3)		# ???
+    Key: topt | Shape: (3,)		# ???
+
+# 바운딩 박스
+0) 샘플정보없음
