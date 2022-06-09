@@ -1,0 +1,20 @@
+# Human Pose Stream For Multi-Stream Convolutional Network Video Action Classfication
+- Spatial Stream CNN과 Human Pose Stream CNN fusion Two Stream model
+- Optical Flow 대신 Pose
+∴ 오픈소스 없음
+
+# Multi-Modal Three-Stream Network for Action Recognition
+- Spatial, Temporal, Pose ConvNet Fusion
+- Pose ConvNet는 Joint Position과 관련
+∴ 오픈소스 없음
+
+# A Multi-Stream Convolutional Neural Network Framework for Group Activity Recognition
+- Input : RGB, Optical Flow, Warped Optical Flow, Pose
+∴ 오픈소스 없음
+
+# Chained Multi-stream Networks Exploiting Pose, Motion, and Appearance for Action Classification and Detection
+- PERF-NET 논문에서 포즈 스트림 비교군(?)으로서 레퍼런스된 방법론
+- Input : RGB, Optical Flow, Pose(form of human body part segmentation)
+- Markov Chain으로 Fusion (PERF-NET은 Distillation 사용)
+∴ 오픈소스 있음 (논문 작성자 Github : https://github.com/mzolfaghari/chained-multistream-networks)
+   근데 매트랩임ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
